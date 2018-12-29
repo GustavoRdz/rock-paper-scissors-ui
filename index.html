@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Rock Paper scissors</title>
+</head>
+
+<body>
+    <div align="center">
+        <h1>Rock, paper, scissors game</h1>
+        <div class="cointainer">
+            <button id="rock" value="Rock">Rock</button>
+            <button id="paper" value="Paper">Paper</button>
+            <button id="scissors" value="Scissors">Scissors</button>
+        </div>
+        <div>
+            <h2>Results</h2>
+
+        </div>
+        <div id="results">
+        </div>
+        <button id="restart" style="display: none;">Restart?</button>
+    </div>
+</body>
+
+</html>
+
+<script>
+    // Election of the computer randomly
+    function computerPlay() {
+        var options = ['Rock', 'Paper', 'Scissors'];
+        var selected = options[Math.floor(Math.random() * options.length)];
+        return selected;
+    }
+
+    // Change elections to number to reduce the code logic
+    function string2number(string) {
+        switch (string.toLowerCase()) {
+            case 'rock':
+                return 2;
+                break;
+            case 'paper':
+                return 1;
+                break;
+            case 'scissors':
+                return 3;
+                break;
+        }
+    }
+
+    // calculates the module of a division, this different of the operator % 
+    function modulo(a, b) {
+        return a - b * Math.floor(a / b);
+    }
+
+    // principal function
+    function game(e) {
+        var results = document.getElementById("results"); // Takes the div for the results
+
+        // we have four buttons the fourth restarts the game but mantains the global score
+        // in case of restart the results div is cleaned and restart variables of the round
+        if (e.target.id === "restart") {
+            results.innerHTML = `<p>GAMES: ` + games + ` &nbsp USER: ` + globalUser + '&nbsp COMPUTER: ' + globalComputer + '&nbsp TIES: ' + globalTies;
+            rounds = 1;
+            computerWins = 0;
+            userWins = 0;
+            ties = 0;
+            button[0].style.display = "inline";
+            button[1].style.display = "inline";
+            button[2].style.display = "inline";
+            button[3].style.display = "none";
+            return;
+        }
+        computer = computerPlay(); // computer chooses an option
+        user = string2number(e.target.id); // option in number
+        comp = string2number(computer); // option in number
+
+        const winners = ['TIE', 'COMPUTER', 'USER']; // posible outcomes from a round
+        const moduloResult = modulo(user - comp, 3); // calculation of the modulo it returns the index of the winner in the above array
+        // construct the paragraph to show results of the round
+        // const userChoose = `<p>ROUND ` + rounds + `-- &nbsp <spam style="color:blue">USER:</spam> <spam style="color:gray">` + e.target.id.toUpperCase() + '</spam> &nbsp';
+        // const computerChoose = ` <spam style="color:red">COMPUTER:</spam> <spam style="color:gray">` + computer.toUpperCase() + '</spam> &nbsp';
+        // const roundWin = `Winner: <spam style="color:green">` + winners[moduloResult] + '</spam></p>';
+        const userChoose = `<div class="result"><p style="color:#00a35f">ROUND ` + rounds + `</p><p><spam style="color:blue">USER:</spam> <spam style="color:gray">` + e.target.id.toUpperCase() + '</spam></p>';
+        const computerChoose = `<p> <spam style="color:red">COMPUTER:</spam> <spam style="color:gray">` + computer.toUpperCase() + '</spam> </p>';
+        const roundWin = `<p>Winner: <spam style="color:green">` + winners[moduloResult] + '</spam></p></div>';
+        results.innerHTML += userChoose + computerChoose + roundWin;
+
+        // actualize the scores of the actual game
+        switch (moduloResult) {
+            case 0:
+                ties++;
+                break;
+            case 1:
+                computerWins++;
+                break;
+            case 2:
+                userWins++;
+                break;
+        }
+        // if you has played 5 rounds the game ends and shows the winner of the game and the option to restart the game
+        if (rounds === 5) {
+            if (computerWins > userWins) {
+                results.innerHTML += '<p>Winner: <spam style="color:#42f4ce">COMPUTER</spam></p>';
+                globalComputer++;
+            } else if (computerWins < userWins) {
+                results.innerHTML += '<p>Winner: <spam style="color:#42f4ce">USER</spam></p>';
+                globalUser++;
+            } else {
+                results.innerHTML += '<p>No winner: <spam style="color:#42f4ce">TIE</spam></p>';
+                globalTies++;
+            }
+            button[0].style.display = "none";
+            button[1].style.display = "none";
+            button[2].style.display = "none";
+            button[3].style.display = "block";
+            games++;
+        }
+        rounds++
+
+    }
+
+    // variable declaration and initialization
+    let rounds = 1;
+    let computerWins = 0;
+    let userWins = 0;
+    let ties = 0;
+    let globalComputer = 0;
+    let globalUser = 0;
+    let globalTies = 0;
+    let games = 0;
+    // get the buttons in the page
+    let button = document.querySelectorAll("button")
+        // listen for each button
+    button.forEach(button => button.addEventListener("click", game));
+</script>
+<style>
+    button {
+        height: 40px;
+        width: 100px;
+        border-radius: 10px;
+    }
+    
+    .result {
+        width: 200px;
+        height: 110px;
+        display: inline-block;
+        background-color: rgba(0, 87, 163, .3);
+        border: 1px solid;
+        border-color: rgba(0, 0, 0, .5);
+        margin: 1px;
+    }
+    
+    .result p {
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+</style>
